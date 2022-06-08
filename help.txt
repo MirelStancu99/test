@@ -199,3 +199,70 @@ if(listViewPrincipal.SelectedItems.Count == 1)
             }
             return rezultat;
         }
+        
+        
+        ========fisier
+              private void deschideToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog dlg = new OpenFileDialog();
+            dlg.Filter = "(*.txt)|*.txt";
+            if (dlg.ShowDialog() == DialogResult.OK)
+            {
+                FileStream fs = new FileStream(dlg.FileName, FileMode.Open, FileAccess.Read);
+                StreamReader sr = new StreamReader(fs);
+                textBox1.Text = sr.ReadToEnd();
+                string[] text = textBox1.text.Split(",");
+                string line;
+                while( (line = sr.ReadLine())!= null)
+                {
+                line...
+                }
+                
+                sr.Close();
+                fs.Close();
+            }
+        }
+
+        private void salveazaToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SaveFileDialog dlg = new SaveFileDialog();
+            dlg.Filter = "(*.txt)|*.txt";
+            if (dlg.ShowDialog() == DialogResult.OK)
+            {
+                FileStream fs = new FileStream(dlg.FileName, FileMode.Create, FileAccess.Write);
+                StreamWriter sw = new StreamWriter(fs);
+                sw.WriteLine(textBox1.Text);
+                sw.Close();
+                fs.Close();
+                textBox1.Clear();
+            }
+        }
+        
+               private void deschideToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog dlg = new OpenFileDialog();
+            dlg.Filter = "(*.txt)|*.txt";
+            if (dlg.ShowDialog() == DialogResult.OK)
+            {
+                FileStream fs = new FileStream(dlg.FileName, FileMode.Open, FileAccess.Read);
+                StreamReader sr = new StreamReader(fs);
+                textBox1.Text = sr.ReadToEnd();
+                sr.Close();
+                fs.Close();
+            }
+        }
+
+        private void salveazaToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SaveFileDialog dlg = new SaveFileDialog();
+            dlg.Filter = "(*.txt)|*.txt";
+            if (dlg.ShowDialog() == DialogResult.OK)
+            {
+                FileStream fs = new FileStream(dlg.FileName, FileMode.Create, FileAccess.Write);
+                StreamWriter sw = new StreamWriter(fs);
+                sw.WriteLine(textBox1.Text);
+                sw.Close();
+                fs.Close();
+                textBox1.Clear();
+            }
+        }
