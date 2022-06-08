@@ -1,914 +1,201 @@
---afiseaza numele si prenumele angajatului cu codul 100.
-
-DECLARE
-
-v_nume angajati.nume%TYPE;
-v_prenume angajati.prenume%TYPE;
-
-BEGIN
-
-SELECT nume, prenume
-INTO v_nume, v_prenume
-FROM angajati
-
-WHERE id_angajat = 100;
-DBMS_OUTPUT.PUT_LINE('NUMELE ANGAJATULUI ESTE:' ||
-v_nume||' '||v_prenume);
-END;
-/
-
-VARIABLE n number
---variabila globala
-BEGIN
-select count(*) into :n
-from comenzi
-where modalitate = 'online';
-END;
-/
-PRINT n
-   -- afiseaza 32
-
-
-
-Să se afişeze salariul mărit cu un x procente. Salariul şi procentul se citesc de la tastatură.
-
-ACCEPT p_sal PROMPT 'Introduceţi salariul:'
-ACCEPT p_procent PROMPT 'Introduceţi procentul:'
-DECLARE
-v_sal number:=&p_sal;
-v_procent number:=&p_procent;
-BEGIN
-dbms_output.put_line(to_char(nvl(v_sal,0)*(1+nvl(v_procent,0)/100)));
-END;
-/
-
-
-
-IF cond1 THEN
-
-     secvcom1
-
-ELSIF condN THEN secvcomN;
-
-ELSE secvcomN+1;
-
-
-END IF;
-
-
-
-v_lista:= CASE WHEN v_lista < 500 THEN 2* v_lista
-
-          WHEN v_lista between 500 and 1000 THEN       1.5 * v_lista
-
-
-          ELSE 1.25* v_lista END;
-
-
-
-LOOP
-
-Secventa comenzi;
-
-EXIT [WHEN cond]; - optional
-
-
-END LOOP;
-
-
-
-Se afişează în ordine angajaţii cu codurile în intervalul 100-110 atât timp cât salariul acestora este mai mic decât media:
-
-
-DECLARE
-v_sal angajati.salariul%type;
-v_salMediu v_sal%type;
-i number(4):=100;
-BEGIN
-SELECT avg(salariul) into v_salmediu from angajati;
-dbms_output.put_line('Salariul mediu este: '||v_salmediu);
-while i<=110 loop
-select salariul into v_sal from angajati where id_angajat=i;
-dbms_output.put_line('Salariatul cu codul '||i||' are salariul: '||v_sal);
-i:=i+1;
-exit when v_sal<v_salmediu;
-end loop;
-end;
-/
-
-
-
-Se afişează în ordine angajaţii cu codurile în intervalul 100-110 atât timp cât salariul acestora este mai mic decât media:
-
-DECLARE
-v_sal angajati.salariul%type;
-v_salMediu v_sal%type;
--- i nu mai trebuie declarat
-BEGIN
-SELECT avg(salariul) into v_salmediu from angajati;
-dbms_output.put_line('Salariul mediu este: '||v_salmediu);
-for i in 100..110 loop
-select salariul into v_sal from angajati where id_angajat=i;
-dbms_output.put_line('Salariatul cu codul '||i||' are salariul: '||v_sal);
-exit when v_sal<v_salmediu;
-end loop;
-end;
-/
-
-implicit
-Se șterg produsele din categoria hardware3 care nu au fost comandate. Se afișează numărul de rânduri şterse.
-
- SET SERVEROUTPUT ON
-
-BEGIN
-
-DELETE FROM produse p
-
-WHERE categorie='hardware3' and not exists (select 1 from rand_comenzi r where p.id_produs=r.id_produs);
-
-DBMS_OUTPUT.PUT_LINE (SQL%ROWCOUNT || ' randuri sterse');
-
-ROLLBACK;
-
-DBMS_OUTPUT.PUT_LINE (SQL%ROWCOUNT || ' randuri afectate');
-
-END;
-
-/
-
-
-
-explicit
-
-Să se afişeze lista cu numele şi salariul angajaţilor din departamentul 60 folosind un cursor explicit și trei variabile scalare:
-
-set serveroutput on
-
-DECLARE
-
-cursor ang_cursor is select id_angajat, nume, salariul from angajati where id_departament=60;
-
-ang_id angajati.id_angajat%type;
-
-ang_nume angajati.nume%type;
-
-ang_sal angajati.salariul%type;
-
-BEGIN
-
-dbms_output.put_line('Lista cu salariariile angajatilor din departamentul 60');
-
-open ang_cursor;
-
-loop
-
-fetch ang_cursor into ang_id, ang_nume, ang_sal;
-
-exit when ang_cursor%notfound;
-
-dbms_output.put_line('Salariatul '||ang_nume||' are salariul: '||ang_sal);
-
-end loop;
-
-close ang_cursor;
-
-end;
-
-
-/
-
-
-
-CU ROWTYPE
-
-set serveroutput on
-
-declare
-
-cursor ang_cursor is select id_angajat, nume, salariul from angajati where id_departament=60;
-
---tipul record definit cu %ROWTYPE pt incarcarea valorilor cursorului
-
-ang_rec ang_cursor%rowtype;
-
-begin
-
-dbms_output.put_line('Lista cu salariariile angajatilor din departamentul 60');
-
-open ang_cursor;
-
-loop
-
-fetch ang_cursor into ang_rec;
-
-exit when ang_cursor%notfound;
-
-dbms_output.put_line('Salariatul '||ang_rec.nume||' are salariul: '||ang_rec.salariul);
-
-end loop;
-
-close ang_cursor;
-
-end;
-
-/
-
-
-
-Să se încarce în tabela MESAJE primii 5 angajaţi (id şi nume)
-
- CREATE TABLE mesaje
-
-(cod varchar2(7),
-
-nume varchar2(20)
-
-);
-
+string connString; //inafara constructor
+connString = "Provider = Microsoft.ACE.OLEDB.12.0; Data Source = student.accdb";//in constructor
+OleDbConnection conexiune = new OleDbConnection(connString);
+try
+{
+    conexiune.Open();
+    //MessageBox.Show("s-a deschis");
+    OleDbCommand comanda = new OleDbCommand();
+    comanda.CommandText = "SELECT * FROM student";
+    comanda.Connection = conexiune;
  
-
-DECLARE
-
-v_id angajati.id_angajat%type;
-
-v_nume angajati.nume%type;
-
-CURSOR c1 IS SELECT id_angajat, nume FROM angajati;
-
+    OleDbDataReader reader = comanda.ExecuteReader();
+    while (reader.Read())
+    {
+        ListViewItem itm = new ListViewItem(reader["cod"].ToString());
+        itm.SubItems.Add(reader["nume"].ToString());
+        listView1.Items.Add(itm);
+    }
+}
+catch (Exception ex)
+{
+    MessageBox.Show(ex.Message);
+}
+finally
+{
+    conexiune.Close();
+}
  
-
-BEGIN
-
-OPEN c1;
-
-FOR i IN 1..5 LOOP
-
-FETCH c1 INTO v_id, v_nume;
-
-INSERT INTO mesaje VALUES(v_id, v_nume);
-
-END LOOP;
-
-CLOSE c1;
-
-END;
-
-/
-
-SELECT * FROM mesaje;
-
-
-
-CU ROWCOUNT===
-
-
-
-DECLARE
-
-v_id angajati.id_angajat%type;
-
-v_nume angajati.nume%type;
-
-CURSOR c1 IS SELECT id_angajat, nume FROM angajati;
-
  
-
-BEGIN
-
-OPEN c1;
-
-LOOP
-
-FETCH c1 INTO v_id, v_nume;
-
-EXIT WHEN c1%ROWCOUNT>5 OR c1%NOTFOUND;
-
-INSERT INTO mesaje VALUES (v_id, v_nume);
-
-END LOOP;
-
-CLOSE c1;
-
-END;
-
-/
-
-
-SELECT * FROM mesaje;
-
-
-
-EXCEPTION
-
-WHEN  NO_DATA_FOUND THEN
-
-dbms_output.put_line('Nu exista angajatul cu acest ID!');
-
-
-
-SET SERVEROUTPUT ON
-
-DECLARE
-
-sal angajati.salariul%type;
-
-BEGIN
-
-select salariul into sal from angajati where prenume='John';
-
-DBMS_OUTPUT.PUT_LINE('John are salariul de: '||sal);
-
-EXCEPTION
-
-WHEN TOO_MANY_ROWS THEN
-
-DBMS_OUTPUT.PUT_LINE('Exista mai multi salariati cu numele John! Utilizati un cursor pentru selectie!');
-
-END;
-
-
-/
-
-
-
-DECLARE
-
-invalid_prod EXCEPTION;
-
+==================================================
  
-
-BEGIN
-
-UPDATE produse
-
-SET denumire_produs='Laptop ABC'
-
-WHERE id_produs=3;
-
+private void button2_Click(object sender, EventArgs e)
+{
+    OleDbConnection conexiune = new OleDbConnection(connString);
+    try
+    {
+        conexiune.Open();
+        OleDbCommand comanda = new OleDbCommand();
+        comanda.Connection = conexiune;
+        foreach (ListViewItem itm in listView1.Items)
+            if (itm.Checked)
+            {
+                int cod = Convert.ToInt32(itm.SubItems[0].Text);
+                comanda.CommandText = "UPDATE student SET forma='ZI' WHERE cod=" + cod;
+                comanda.ExecuteNonQuery();
+            }
+    }
+    catch (Exception ex)
+    {
+        MessageBox.Show(ex.Message);
+    }
+    finally
+    {
+        conexiune.Close();
+    }
+    button1_Click(sender, e);
+}
  
+private void dELETEToolStripMenuItem_Click(object sender, EventArgs e)
+{
+    OleDbConnection conexiune = new OleDbConnection(connString);
+    try
+    {
+        conexiune.Open();
+        OleDbCommand comanda = new OleDbCommand();
+        comanda.Connection = conexiune;
+        foreach (ListViewItem itm in listView1.Items)
+            if (itm.Selected)
+            {
+                int cod = Convert.ToInt32(itm.SubItems[0].Text);
+                comanda.CommandText = "DELETE FROM student WHERE cod=" + cod;
+                comanda.ExecuteNonQuery();
+            }
+    }
+    catch (Exception ex)
+    {
+        MessageBox.Show(ex.Message);
+    }
+    finally
+    {
+        conexiune.Close();
+    }
+    button1_Click(sender, e);
+}
 
-IF SQL%NOTFOUND THEN
 
-RAISE invalid_prod;
 
-END IF;
-
+Form2 frm2 = new Form2();
+frm2.ShowDialog();
+if (frm2.DialogResult == DialogResult.OK)
+{
+    DateTime data = frm2.dtpData.Value;
+    string nume = frm2.tbNume.Text;
+    string specializare = frm2.cbSpecializare.SelectedItem.ToString();
+    float punctajPractic = float.Parse(frm2.tbPctPractic.Text);
+    float punctajTeoretic = float.Parse(frm2.tbPctTeorie.Text);
+    Interviu i = new Interviu(data, specializare, nume, punctajTeoretic,
+        punctajPractic);
+    job += i;
+    ListViewItem itm = new ListViewItem(data.ToString());
+    itm.SubItems.Add(nume);
+    itm.SubItems.Add(specializare);
+    itm.SubItems.Add(i.calculeazaPunctaj().ToString());
+    listView1.Items.Add(itm);
+    listView1.Refresh();
+}
  
-
-EXCEPTION
-
-WHEN invalid_prod THEN
-
-DBMS_OUTPUT.PUT_LINE('Nu exista produsul cu acest ID');
-
-WHEN OTHERS THEN
-
-DBMS_OUTPUT.PUT_LINE('A aparut o eroare! Nu se poate actualiza denumirea produsului!');
-
-END;
-
-
-/
-
-
-
-
-
-DECLARE
-
-invalid_prod EXCEPTION;
-
  
-
-BEGIN
-
-UPDATE produse
-
-SET denumire_produs='Laptop ABC'
-
-WHERE id_produs=3;
-
  
-
-IF SQL%NOTFOUND THEN
-
-RAISE NO_DATA_FOUND;
-
-END IF;
-
+=====editare
+if(listViewPrincipal.SelectedItems.Count == 1)
+            {
+                FormCredit formCredit = new FormCredit();
+                formCredit.buttonAdauga.Text = "Editeaza";
+                string numeCautat = listViewPrincipal.SelectedItems[0].Text;
+                formCredit.tbNumeClient.Text = listViewPrincipal.SelectedItems[0].Text;
+                formCredit.tbValoareCredit.Text = listViewPrincipal.SelectedItems[0].SubItems[1].Text;
+                formCredit.tbDobanda.Text = listViewPrincipal.SelectedItems[0].SubItems[2].Text;
+                formCredit.tbDataAcordarii.Text = listViewPrincipal.SelectedItems[0].SubItems[3].Text;
+                formCredit.tbPerioada.Text = listViewPrincipal.SelectedItems[0].SubItems[4].Text;
  
-
-EXCEPTION
-
-WHEN NO_DATA_FOUND THEN
-
-DBMS_OUTPUT.PUT_LINE(SQLERRM);
-
-END;
-
-
-/
-
-EXECUTE procedura;
-
-Procedura modifica_salariul primeşte doi parametrii: p_id_angajat şi procent şi majorează cu procentul specificat salariul angajatului cu id_angajat=p_id_angajat:
-
-CREATE OR REPLACE
-
-PROCEDURE modifica_salariul_procent
-
-(p_id_angajat IN angajati.id_angajat%type, procent IN number)
-
-IS
-
-v_salariul angajati.salariul%type;
-
-BEGIN
-
-Select salariul into v_salariul from angajati where id_angajat=p_id_angajat;
-
-dbms_output.put_line('Angajatul are salariul de '||v_salariul);
-
-Update angajati
-
-Set salariul=salariul*(1+procent/100)
-
-Where id_angajat=p_id_angajat;
-
-Select salariul into v_salariul from angajati where id_angajat=p_id_angajat;
-
-Dbms_output.put_line('Angajatul are acum salariul de '||v_salariul);
-
-END;
-
-
-/
-
-
-
-Procedura primeşte ca parametru de tip IN id_ul unui angajat şi returnează prin parametrii de tip OUT numele şi salariul acestuia:
-
-CREATE OR REPLACE PROCEDURE cauta_angajat
-(p_id_angajat IN angajati.id_angajat%type,
-p_nume OUT angajati.nume%type,
-p_salariul OUT angajati.salariul%type)
-IS
-BEGIN
-Select nume, salariul into p_nume, p_salariul from angajati where id_angajat=p_id_angajat;
-
-DBMS_OUTPUT.PUT_LINE(' Angajatul '||p_nume||' are salariul de: '||p_salariul);
-
-END;
-
-
-/
-
-In această situație nuvom folosi un bloc apelator anonim:
-
-SET SERVEROUTPUT ON
-
-DECLARE
-
-v_nume angajati.nume%type;
-
-v_salariul angajati.salariul%type;
-
-BEGIN
-
-Cauta_angajat(150, v_nume, v_salariul);
-
-END;
-
-
-/
-
-
-
-Procedura calculează salariul mediu şi îl returnează printr-un parametru de tip OUT:
-
- CREATE or REPLACE PROCEDURE sal_mediu
-
-
-(p_sal_mediu OUT number)
-
-IS
-
-BEGIN
-
-Select AVG(salariul) into p_sal_mediu from angajati;
-
-END;
-
-/
-
-
-
-  CREATE OR REPLACE PROCEDURE prelucreaza_angajati 
-IS CURSOR c_ang IS SELECT id_angajat FROM angajati; 
-BEGIN
- FOR rec_ang IN c_ang 
-LOOP mareste_salariu(rec_ang.id_angajat, 10); 
-END LOOP; 
-COMMIT; 
-END prelucreaza_angajati; / 
-EXECUTE prelucreaza_angajati  
-
-Funcția  verifica_salariul returnează TRUE/FALSE daca salariatul are salariul mai mare/mai mic sau egal cu salariul mediu  si NULL daca salariatul nu exista
-
-
-CREATE OR REPLACE FUNCTION verifica_salariul
-
-(p_id_angajat IN angajati.id_angajat%type, p_sal_mediu IN number)
-
-RETURN Boolean
-
-IS
-
-v_salariul angajati.salariul%type;
-
-BEGIN
-
-SELECT salariul into v_salariul from angajati where id_angajat=p_id_angajat;
-
-IF v_salariul > p_sal_mediu then
-
-return true;
-
-ELSE
-
-return false;
-
-end if;
-
-EXCEPTION
-
-WHEN no_data_found THEN
-
-return NULL;
-
-end;
-
-/
-
-
-
-CREATE OR REPLACE FUNCTION nr_angajati (p_id angajati.id_angajat%TYPE)
-RETURN NUMBER
-AS
-v_nr NUMBER;
-v_salariu angajati.salariul%TYPE;
-v_anul_angajarii NUMBER;
-BEGIN
-   SELECT salariul, EXTRACT (YEAR FROM data_angajare)
-   INTO v_salariu, v_anul_angajarii
-   FROM angajati
-   WHERE id_angajat=p_id;
-   SELECT COUNT(id_angajat)
-    INTO v_nr
-    FROM angajati
-    WHERE salariul < v_salariu AND EXTRACT (YEAR FROM data_angajare)= v_anul_angajarii;
-    RETURN v_nr;
-EXCEPTION
-   WHEN NO_DATA_FOUND THEN DBMS_OUTPUT.PUT_LINE('Nu exista angajatul cu id-ul introdus!');
-                    RETURN -1;
-    WHEN OTHERS THEN DBMS_OUTPUT.PUT_LINE('Alte exceptii');
-                RETURN -1;
-END;
-/
-
-=====================================
-
-  CREATE OR REPLACE FUNCTION date_ang (p_id IN angajati.id_angajat%TYPE) 
-
-RETURN angajati%ROWTYPE 
-
-IS
-
- rec_ang angajati%ROWTYPE; 
-
-BEGIN 
-
-SELECT * INTO rec_ang FROM angajati WHERE id_angajat = p_id; RETURN rec_ang;
-
- EXCEPTION WHEN NO_DATA_FOUND THEN RAISE_APPLICATION_ERROR (-20000, 'Angajatul '||p_id ||' nu exista'); 
-
-END date_ang; / 
-
-
-
-DECLARE
-
- r_ang angajati%ROWTYPE; 
-
-BEGIN r_ang := date_ang (100); 
-
-DBMS_OUTPUT.PUT_LINE(r_ang.nume); 
-
-END;/
-
-
-
-DECLARE
-CURSOR c_ang IS SELECT id_angajat FROM angajati;
-v_id angajati.id_angajat%TYPE;
-r_ang angajati%ROWTYPE;
-BEGIN
-OPEN c_ang;
-LOOP
-FETCH c_ang INTO v_id;
-EXIT WHEN c_ang%NOTFOUND;
-r_ang := date_ang (v_id);
-DBMS_OUTPUT.PUT_LINE(r_ang.nume);
-END LOOP;
-CLOSE c_ang;
-END;
-/
-
-====================================================================
-
-
-
-CREATE OR REPLACE FUNCTION afiseaza_salariul
-(p_id angajati.id_angajat%TYPE) RETURN NUMBER IS
-p_sal angajati.salariul%TYPE := 0;
-BEGIN
-SELECT salariul INTO p_sal
-FROM angajati
-WHERE id_angajat = p_id;
-RETURN p_sal;
-END afiseaza_salariul;
-/
-
-create or replace PACKAGE actualizare_produse IS
-
-procedure adauga_produs
-
-(p_codp produse.id_produs%type,
-
-p_denp PRODUSE.DENUMIRE_PRODUS%type,
-
-p_lista produse.pret_lista%type,
-
-p_min produse.pret_min%type);
-
+                formCredit.ShowDialog();
  
-
-procedure modifica_produs
-
-(p_codp produse.id_produs%type,
-
-p_denp PRODUSE.DENUMIRE_PRODUS%type,
-
-p_lista produse.pret_lista%type,
-
-p_min produse.pret_min%type);
-
+                string numeClient = formCredit.tbNumeClient.Text;
+                float valoareCredit = float.Parse(formCredit.tbValoareCredit.Text);
+                float dobanda = float.Parse(formCredit.tbDobanda.Text);
+                string dataAcordarii = formCredit.tbDataAcordarii.Text;
+                int perioada = int.Parse(formCredit.tbPerioada.Text);
+                foreach(Credit c in credite)
+                {
+                    if (c.NumeClient.Equals(numeCautat))
+                    {
+                        c.NumeClient = numeClient;
+                        c.ValoareCredit = valoareCredit;
+                        c.Dobanda = dobanda;
+                        c.DataAcordarii = dataAcordarii;
+                        c.Perioada = perioada;
+                    }
+                }
+                listViewPrincipal.SelectedItems[0].Text = formCredit.tbNumeClient.Text;
+                listViewPrincipal.SelectedItems[0].SubItems[1].Text = formCredit.tbValoareCredit.Text;
+                listViewPrincipal.SelectedItems[0].SubItems[2].Text = formCredit.tbDobanda.Text;
+                listViewPrincipal.SelectedItems[0].SubItems[3].Text = formCredit.tbDataAcordarii.Text;
+                listViewPrincipal.SelectedItems[0].SubItems[4].Text = formCredit.tbPerioada.Text;
  
-
-procedure modifica_produs
-
-(p_codp produse.id_produs%type,
-
-p_lista produse.DENUMIRE_PRODUS%type);
-
+            }
  
-
-procedure sterge_produs
-
-(p_codp produse.id_produs%type);
-
+//=======sterge
  
-
-function exista_cod
-
-(p_codp produse.id_produs%type)
-
-return boolean;
-
+if(listViewPrincipal.SelectedItems.Count == 1)
+            {
+                Credit credit = new Credit();
+                string numeCautat = listViewPrincipal.SelectedItems[0].Text;
+                listViewPrincipal.SelectedItems[0].Remove();
+               
+                foreach (Credit c in credite)
+                {
+                    if(c.NumeClient.Equals(numeCautat))
+                    {
+                        credit = c;
+                    }
+                }  
+                credite.Remove(credit);
+            }
  
-
-exceptie exception;
-
+//================
+        public Tranzactie this[int i]
+        {
+            get
+            {
+                return this.tranzactieList[i];
+            }
+            set
+            {
+                this.tranzactieList[i] = value;
+            }
+        }
  
-
-END;
-
-/
-
-
-
-create or replace PACKAGE BODY actualizare_produse IS
-
-procedure adauga_produs
-
-(p_codp produse.id_produs%type,
-
-p_denp PRODUSE.DENUMIRE_PRODUS%type,
-
-p_lista produse.pret_lista%type,
-
-p_min produse.pret_min%type)
-
+        public static explicit operator double(ExtrasCont extras)
+        {
+            double rezultat = 0 ;
+            double suma = 0;
+            int contor = 0;
+            foreach(Tranzactie c in extras.tranzactieList)
+            {
+                suma += c.Suma;
+                contor++;
+            }
+            rezultat = suma / contor;
+            return rezultat;
+        }
  
-
-is
-
-begin
-
-if exista_cod(p_codp) then
-
-raise exceptie;
-
-else
-
-insert into produse(id_produs,denumire_produs,pret_lista,pret_min) values (p_codp, p_denp, p_lista, p_min);
-
-end if;
-
-exception
-
-when exceptie then
-
-dbms_output.put_line('Produs existent!');
-
-end;
-
- 
-
-procedure modifica_produs
-
-(p_codp produse.id_produs%type,
-
-p_denp PRODUSE.DENUMIRE_PRODUS%type,
-
-p_lista produse.pret_lista%type,
-
-p_min produse.pret_min%type)
-
-is
-
-begin
-
-if exista_cod(p_codp) then
-
-update produse
-
-set DENUMIRE_PRODUS=p_denp, pret_lista=p_lista, pret_min=p_min
-
-where id_produs=p_codp;
-
-else
-
-raise exceptie;
-
-end if;
-
-exception
-
-when exceptie then
-
-dbms_output.put_line('Produsul cu aceast cod nu exista!');
-
-end;
-
- 
-
---supraîncarcare a procedurii modifica_produs
-
-procedure modifica_produs
-
-(p_codp produse.id_produs%type,
-
-p_lista produse.DENUMIRE_PRODUS%type)
-
-is
-
-begin
-
-if exista_cod(p_codp) then
-
-update produse
-
-set pret_lista=p_lista
-
-where id_produs=p_codp;
-
-else
-
-raise exceptie;
-
-end if;
-
-exception
-
-when exceptie then
-
-dbms_output.put_line('Produsul cu aceast cod nu exista!');
-
-end;
-
- 
-
-procedure sterge_produs
-
-(p_codp produse.id_produs%type)
-
-is
-
-begin
-
-if exista_cod(p_codp) then
-
-delete from produse
-
-where id_produs=p_codp;
-
-dbms_output.put_line('Produsul cu codul '||p_codp||' a fost sters!');
-
-else
-
-raise exceptie;
-
-end if;
-
-exception
-
-when exceptie then
-
-dbms_output.put_line('Produsul cu aceast cod nu exista!');
-
-end;
-
- 
-
-function exista_cod
-
-(p_codp produse.id_produs%type)
-
-return boolean
-
-is
-
-v_unu number;
-
-begin
-
-select 1 into v_unu
-
-from produse
-
-where id_produs=p_codp;
-
-return true;
-
-exception
-
-when no_data_found then
-
-return false;
-
-end;
-
-END;
-
-
-/
-
- 
-
-Apelul procedurilor / funcțiilor din cadrul pachetului
-
-execute actualizare_produse.adauga_produs(449,'ceai', 12, 14);
-
-
-select * from produse where id_produs=449;
-
-
-
- --Apelarea procedurii supra-încărcate
-
-execute actualizare_produse.modifica_produs(449,20);
-
-select * from produse where id_produs=449;
-
-
-
- --Se poate folosi și CALL în loc de execute
-
-call actualizare_produse.modifica_produs(449, null);
-
-select * from produse where id_produs=449;
-
-
-
- --Apelarea dintr-un bloc anonim
-
-begin
-
-actualizare_produse.sterge_produs(449);
-
-end;
-
-/
-
-select * from produse where id_produs=449;
+        public static implicit operator int(ExtrasCont extras)
+        {
+            int rezultat = 0 ;
+            foreach(Tranzactie t in extras.tranzactieList)
+            {
+                rezultat++;
+            }
+            return rezultat;
+        }
